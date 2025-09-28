@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Random Quote</title>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -39,32 +40,29 @@
 </head>
 <body>
   <div class="quote-box">
-    <p id="quote">Loading quote...</p>
-    <button onclick="loadRandomQuote()">New Quote</button>
+    <p id="quote">Click the button to get a quote!</p>
+    <button id="new-quote">New Quote</button>
   </div>
 
   <script>
-    let quotes = [];
-
-    async function loadQuotesFile() {
-      try {
-        const response = await fetch('quotes.json');
-        quotes = await response.json();
-        loadRandomQuote(); // show one on page load
-      } catch (error) {
-        document.getElementById('quote').textContent = "Failed to load quotes.";
-        console.error(error);
-      }
+    function fetchQuote() {
+      $.ajax({
+        method: 'GET',
+        url: 'https://api.api-ninjas.com/v1/quotes',
+        headers: { 'X-Api-Key': 'CzfvhaeZxxqROnw7RYBYxw==YdLyhfjZANCC4Gtb' },
+        contentType: 'application/json',
+        success: function(result) {
+          const quote = result[0];
+          $('#quote').text(`"${quote.quote}" — ${quote.author}`);
+        },
+        error: function ajaxError(jqXHR) {
+          console.error('Error: ', jqXHR.responseText);
+          $('#quote').text("Failed to fetch quote.");
+        }
+      });
     }
 
-    function loadRandomQuote() {
-      if (quotes.length === 0) return;
-      const randomIndex = Math.floor(Math.random() * quotes.length);
-      const quote = quotes[randomIndex];
-      document.getElementById('quote').textContent = `"${quote.quote}" — ${quote.author}`;
-    }
-
-    loadQuotesFile();
+    $('#new-quote').click(fetchQuote);
   </script>
 </body>
 </html>
