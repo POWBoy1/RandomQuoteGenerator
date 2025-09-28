@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Quote</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f0f4f8;
+      margin: 0;
+    }
+    .quote-box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background: #007BFF;
+      color: white;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="quote-box">
+    <p id="quote">Loading quote...</p>
+    <button onclick="loadRandomQuote()">New Quote</button>
+  </div>
+
+  <script>
+    let quotes = [];
+
+    async function loadQuotesFile() {
+      try {
+        const response = await fetch('quotes.json');
+        quotes = await response.json();
+        loadRandomQuote(); // show one on page load
+      } catch (error) {
+        document.getElementById('quote').textContent = "Failed to load quotes.";
+        console.error(error);
+      }
+    }
+
+    function loadRandomQuote() {
+      if (quotes.length === 0) return;
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      const quote = quotes[randomIndex];
+      document.getElementById('quote').textContent = `"${quote.quote}" — ${quote.author}`;
+    }
+
+    loadQuotesFile();
+  </script>
+</body>
+</html>
